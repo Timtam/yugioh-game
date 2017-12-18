@@ -15,7 +15,6 @@ from ..duel import Duel
 from .. import globals
 from ..room import Room
 from ..utils import process_duel, process_duel_replay
-from ..websockets import start_websocket_server
 from .deck_editor_parser import DeckEditorParser
 from .duel_parser import DuelParser
 from .room_parser import RoomParser
@@ -283,19 +282,6 @@ def encoding(caller):
 	caller.connection.player.get_account().encoding = caller.args[0]
 	caller.connection.session.commit()
 	caller.connection.notify(caller.connection._("Encoding set."))
-
-@LobbyParser.command(allowed=lambda c: c.connection.player.is_admin)
-def restart_websockets(caller):
-	if not globals.websocket_server:
-		caller.connection.notify(caller.connection._("Websocket server not enabled."))
-		return
-	caller.connection.notify(caller.connection._("Stopping server..."))
-	d = globals.websocket_server.stopListening()
-	def stopped(r):
-		caller.connection.notify(caller.connection._("Done, restarting."))
-		start_websocket_server()
-	d.addCallback(stopped)
-	d.addErrback(log.err)
 
 @LobbyParser.command(args_regexp=r'(.*)', allowed=lambda c: c.connection.player.is_admin)
 def announce(caller):

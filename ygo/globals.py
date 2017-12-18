@@ -5,4 +5,3 @@ rebooting = False
 server = None
 spanish_db = None
 strings = {}
-websocket_server = None
